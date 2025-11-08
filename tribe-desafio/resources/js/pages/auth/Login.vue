@@ -20,6 +20,7 @@ const submit = async () => {
 
     try {
         await authService.login(form.value);
+        window.location.href = '/dashboard';
     } catch (err: any) {
         error.value = err.response?.data?.error || 'Erro ao fazer login';
     } finally {

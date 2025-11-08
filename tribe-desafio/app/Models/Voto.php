@@ -8,7 +8,7 @@ class Voto extends Model
 {
     protected $fillable = [
         'user_id',
-        'idea_id',
+        'ideia_id',
         'tipo'
     ];
 

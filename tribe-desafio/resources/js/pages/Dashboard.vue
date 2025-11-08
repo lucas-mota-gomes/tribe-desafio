@@ -41,8 +41,12 @@
                             <i class="pi pi-calendar"></i>
                             <span>{{ formatarData(ideia.criado_em) }}</span>
                         </div>
-                        <Button type="button" severity="primary" outlined icon="pi pi-thumbs-up"
-                            :badge="ideia?.votos?.toString() || '0'" />
+                        <div class="flex gap-2">
+                            <Button type="button" severity="primary" v-on:click="votarIdeia(ideia?.id, 'positivo')" outlined icon="pi pi-thumbs-up"
+                                :badge="ideia?.votos?.toString() || '0'" />
+                            <Button type="button" severity="danger" v-on:click="votarIdeia(ideia?.id, 'negativo')" outlined icon="pi pi-thumbs-down"
+                                :badge="ideia?.votos_negativos?.toString() || '0'" />
+                        </div>
                     </div>
                 </template>
             </Card>
@@ -147,6 +151,18 @@ const salvarIdeia = async () => {
     }
 };
 
+const votarIdeia = async (ideiaId, tipoVoto) => {
+    try {
+        await ideiasService.vote(ideiaId, tipoVoto);
+
+        await getIdeias();
+
+    } catch (erro) {
+        console.error('Erro ao votar na ideia:', erro);
+        alert('Erro ao registrar voto. Tente novamente.');
+    }
+};
+
 const getIdeias = async () => {
     carregando.value = true;
 
@@ -158,7 +174,8 @@ const getIdeias = async () => {
             descricao: ideia.descricao,
             autor: ideia.autor?.name || 'Desconhecido',
             criado_em: ideia.created_at,
-            votos: ideia.votos?.length || 0
+            votos: ideia.votos_positivos || 0,
+            votos_negativos: ideia.votos_negativos || 0
         }));
     } catch (erro) {
         console.error('Erro ao carregar ideias:', erro);

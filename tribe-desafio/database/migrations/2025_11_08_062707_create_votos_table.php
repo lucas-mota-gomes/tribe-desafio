@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('votos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('idea_id')->constrained('ideias')->onDelete('cascade');
+            $table->foreignId('ideia_id')->constrained('ideias')->onDelete('cascade');
             $table->enum('tipo', ['positivo', 'negativo']);
             $table->timestamps();
             
-            $table->unique(['user_id', 'idea_id']);
+            $table->unique(['user_id', 'ideia_id']);
         });
     }
 

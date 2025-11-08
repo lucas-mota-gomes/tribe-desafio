@@ -15,7 +15,7 @@ class Ideia extends Model
 
     public function votos()
     {
-        return $this->hasMany(Voto::class, 'idea_id');
+        return $this->hasMany(Voto::class, 'ideia_id');
     }
 
     public function votosPositivos()
