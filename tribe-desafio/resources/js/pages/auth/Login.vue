@@ -36,7 +36,7 @@ const submit = async () => {
             class="bg-surface-0 dark:bg-surface-900 p-8 md:p-12 shadow-sm rounded-2xl w-full max-w-sm mx-auto flex flex-col gap-8">
             <div class="flex flex-col items-center gap-4">
                 <div class="flex items-center gap-4">
-                    <img src="https://tribemd.com/_image?href=%2F_astro%2Fimg_base_tribe_logo.9SlBSC8C.svg&f=svg" alt="Tribe Logo" class="h-30 w-30 object-contain" />
+                    <img src="https://tribemd.com/_image?href=%2F_astro%2Fimg_base_tribe_logo.9SlBSC8C.svg&f=svg" alt="Tribe Logo" class="h-auto w-50 object-contain" />
                 </div>
             </div>
             <div class="flex flex-col gap-6 w-full">
