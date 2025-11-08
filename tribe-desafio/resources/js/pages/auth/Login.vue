@@ -1,110 +1,73 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthBase from '@/layouts/AuthLayout.vue';
-import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
-import { Form, Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { authService, type LoginData } from '@/services/auth.service';
+import Button from 'primevue/button';
+import Checkbox from 'primevue/checkbox';
+import InputText from 'primevue/inputtext';
+import Password from 'primevue/password';
 
-defineProps<{
-    status?: string;
-    canResetPassword: boolean;
-    canRegister: boolean;
-}>();
+const form = ref<LoginData>({
+    email: '',
+    password: '',
+});
+
+const error = ref('');
+const loading = ref(false);
+
+const submit = async () => {
+    loading.value = true;
+    error.value = '';
+
+    try {
+        await authService.login(form.value);
+    } catch (err: any) {
+        error.value = err.response?.data?.error || 'Erro ao fazer login';
+    } finally {
+        loading.value = false;
+    }
+};
+
 </script>
 
 <template>
-    <AuthBase
-        title="Log in to your account"
-        description="Enter your email and password below to log in"
-    >
-        <Head title="Log in" />
-
+    <div class="bg-surface-50 dark:bg-surface-950 px-6 py-20 md:px-20 lg:px-80">
         <div
-            v-if="status"
-            class="mb-4 text-center text-sm font-medium text-green-600"
-        >
-            {{ status }}
-        </div>
-
-        <Form
-            v-bind="store.form()"
-            :reset-on-success="['password']"
-            v-slot="{ errors, processing }"
-            class="flex flex-col gap-6"
-        >
-            <div class="grid gap-6">
-                <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        name="email"
-                        required
-                        autofocus
-                        :tabindex="1"
-                        autocomplete="email"
-                        placeholder="email@example.com"
-                    />
-                    <InputError :message="errors.email" />
+            class="bg-surface-0 dark:bg-surface-900 p-8 md:p-12 shadow-sm rounded-2xl w-full max-w-sm mx-auto flex flex-col gap-8">
+            <div class="flex flex-col items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <img src="https://tribemd.com/_image?href=%2F_astro%2Fimg_base_tribe_logo.9SlBSC8C.svg&f=svg" alt="Tribe Logo" class="h-30 w-30 object-contain" />
                 </div>
-
-                <div class="grid gap-2">
-                    <div class="flex items-center justify-between">
-                        <Label for="password">Password</Label>
-                        <TextLink
-                            v-if="canResetPassword"
-                            :href="request()"
-                            class="text-sm"
-                            :tabindex="5"
-                        >
-                            Forgot password?
-                        </TextLink>
-                    </div>
-                    <Input
-                        id="password"
-                        type="password"
-                        name="password"
-                        required
-                        :tabindex="2"
-                        autocomplete="current-password"
-                        placeholder="Password"
-                    />
-                    <InputError :message="errors.password" />
+            </div>
+            <div class="flex flex-col gap-6 w-full">
+                <div class="flex flex-col gap-2 w-full">
+                    <label for="email1"
+                        class="text-surface-900 dark:text-surface-0 font-medium leading-normal">Email</label>
+                    <InputText id="email1" v-model="form.email" type="text" placeholder="Email"
+                        class="w-full px-3 py-2 shadow-sm rounded-lg" />
                 </div>
+                <div class="flex flex-col gap-2 w-full">
+                    <label for="password1"
+                        class="text-surface-900 dark:text-surface-0 font-medium leading-normal">Senha</label>
 
-                <div class="flex items-center justify-between">
-                    <Label for="remember" class="flex items-center space-x-3">
-                        <Checkbox id="remember" name="remember" :tabindex="3" />
-                        <span>Remember me</span>
-                    </Label>
+                    <Password id="password1" v-model="form.password" placeholder="Senha" :toggleMask="true" :feedback="false"
+                        input-class="w-full!" />
                 </div>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <Button label="Entrar" icon="pi pi-user" v-on:click="submit()" v-bind:disabled="loading"
+                    class="w-full py-2 rounded-lg flex justify-center items-center gap-2">
+                    <template #icon>
+                        <i class="pi pi-user text-base! leading-normal!" />
+                    </template>
+                </Button>
 
-                <Button
-                    type="submit"
-                    class="mt-4 w-full"
-                    :tabindex="4"
-                    :disabled="processing"
-                    data-test="login-button"
-                >
-                    <Spinner v-if="processing" />
-                    Log in
+                <Button label="Registrar" icon="pi pi-user-plus" severity="secondary"
+                    class="w-full py-2 rounded-lg flex justify-center items-center gap-2">
+                    <template #icon>
+                        <i class="pi pi-user-plus text-base! leading-normal!" />
+                    </template>
                 </Button>
             </div>
-
-            <div
-                class="text-center text-sm text-muted-foreground"
-                v-if="canRegister"
-            >
-                Don't have an account?
-                <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
-            </div>
-        </Form>
-    </AuthBase>
+        </div>
+    </div>
 </template>

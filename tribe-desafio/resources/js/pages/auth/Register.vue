@@ -1,108 +1,87 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthBase from '@/layouts/AuthLayout.vue';
-import { login } from '@/routes';
-import { store } from '@/routes/register';
-import { Form, Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { authService, type RegisterData } from '@/services/auth.service';
+
+const form = ref<RegisterData>({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+});
+
+const error = ref('');
+const loading = ref(false);
+
+const submit = async () => {
+    loading.value = true;
+    error.value = '';
+    
+    try {
+        await authService.register(form.value);
+    } catch (err: any) {
+        error.value = err.response?.data?.message || 'Erro ao registrar';
+    } finally {
+        loading.value = false;
+    }
+};
 </script>
 
 <template>
-    <AuthBase
-        title="Create an account"
-        description="Enter your details below to create your account"
-    >
-        <Head title="Register" />
-
-        <Form
-            v-bind="store.form()"
-            :reset-on-success="['password', 'password_confirmation']"
-            v-slot="{ errors, processing }"
-            class="flex flex-col gap-6"
-        >
-            <div class="grid gap-6">
-                <div class="grid gap-2">
-                    <Label for="name">Name</Label>
-                    <Input
-                        id="name"
-                        type="text"
-                        required
-                        autofocus
-                        :tabindex="1"
-                        autocomplete="name"
-                        name="name"
-                        placeholder="Full name"
-                    />
-                    <InputError :message="errors.name" />
-                </div>
-
-                <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        required
-                        :tabindex="2"
-                        autocomplete="email"
-                        name="email"
-                        placeholder="email@example.com"
-                    />
-                    <InputError :message="errors.email" />
-                </div>
-
-                <div class="grid gap-2">
-                    <Label for="password">Password</Label>
-                    <Input
-                        id="password"
-                        type="password"
-                        required
-                        :tabindex="3"
-                        autocomplete="new-password"
-                        name="password"
-                        placeholder="Password"
-                    />
-                    <InputError :message="errors.password" />
-                </div>
-
-                <div class="grid gap-2">
-                    <Label for="password_confirmation">Confirm password</Label>
-                    <Input
-                        id="password_confirmation"
-                        type="password"
-                        required
-                        :tabindex="4"
-                        autocomplete="new-password"
-                        name="password_confirmation"
-                        placeholder="Confirm password"
-                    />
-                    <InputError :message="errors.password_confirmation" />
-                </div>
-
-                <Button
-                    type="submit"
-                    class="mt-2 w-full"
-                    tabindex="5"
-                    :disabled="processing"
-                    data-test="register-user-button"
-                >
-                    <Spinner v-if="processing" />
-                    Create account
-                </Button>
+    <div class="min-h-screen flex items-center justify-center">
+        <form @submit.prevent="submit" class="w-full max-w-md space-y-4 p-6">
+            <h1 class="text-2xl font-bold">Registrar</h1>
+            
+            <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {{ error }}
             </div>
-
-            <div class="text-center text-sm text-muted-foreground">
-                Already have an account?
-                <TextLink
-                    :href="login()"
-                    class="underline underline-offset-4"
-                    :tabindex="6"
-                    >Log in</TextLink
-                >
+            
+            <div>
+                <label class="block text-sm font-medium mb-1">Nome</label>
+                <input 
+                    v-model="form.name" 
+                    type="text" 
+                    required
+                    class="w-full px-3 py-2 border rounded"
+                />
             </div>
-        </Form>
-    </AuthBase>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1">Email</label>
+                <input 
+                    v-model="form.email" 
+                    type="email" 
+                    required
+                    class="w-full px-3 py-2 border rounded"
+                />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1">Senha</label>
+                <input 
+                    v-model="form.password" 
+                    type="password" 
+                    required
+                    class="w-full px-3 py-2 border rounded"
+                />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1">Confirmar Senha</label>
+                <input 
+                    v-model="form.password_confirmation" 
+                    type="password" 
+                    required
+                    class="w-full px-3 py-2 border rounded"
+                />
+            </div>
+            
+            <button 
+                type="submit" 
+                :disabled="loading"
+                class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+                {{ loading ? 'Registrando...' : 'Registrar' }}
+            </button>
+        </form>
+    </div>
 </template>
