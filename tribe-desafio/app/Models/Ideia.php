@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Idea extends Model
+class Ideia extends Model
 {
     protected $fillable = ['titulo', 'descricao', 'autor_id'];
 

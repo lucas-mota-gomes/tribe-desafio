@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Idea;
+use App\Models\Ideia;
 
 class IdeaController extends Controller
 {
@@ -13,7 +13,12 @@ class IdeaController extends Controller
      */
     public function index()
     {
-        //
+        // Retorna todas as ideias com informações do autor
+        $ideias = Ideia::with('autor')
+            ->orderBy('created_at', 'desc') // Mais recentes primeiro
+            ->get();
+
+        return response()->json($ideias);
     }
 
     /**
@@ -26,7 +31,7 @@ class IdeaController extends Controller
             'descricao' => 'required|string',
         ]);
 
-        $idea = Idea::create([
+        $idea = Ideia::create([
             'titulo' => $request->titulo,
             'descricao' => $request->descricao,
             'autor_id' => auth()->id(),
@@ -37,7 +42,7 @@ class IdeaController extends Controller
 
     public function votar($id)
     {
-        $idea = Idea::findOrFail($id);
+        $idea = Ideia::findOrFail($id);
         $user = auth()->user();
 
         if ($idea->votos()->where('user_id', $user->id)->exists()) {
