@@ -90,6 +90,7 @@ import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import ProgressSpinner from 'primevue/progressspinner';
 import { ideiasService } from '@/services/ideias.service';
+import { useToast } from 'primevue/usetoast';
 
 defineOptions({
     layout: Layout
@@ -98,7 +99,7 @@ defineOptions({
 const carregando = ref(false);
 const dialogVisivel = ref(false);
 const salvando = ref(false);
-
+const toast = useToast();
 const ideias = ref([]);
 
 
@@ -179,7 +180,8 @@ const getIdeias = async () => {
         }));
     } catch (erro) {
         console.error('Erro ao carregar ideias:', erro);
-        alert('Erro ao carregar ideias. Tente novamente.');
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Login expirado. Por favor, faça login novamente.', life: 3000 });
+        window.location.href = '/login';
     } finally {
         carregando.value = false;
     }

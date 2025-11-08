@@ -17,6 +17,10 @@ const error = ref('');
 const loading = ref(false);
 const toast = useToast();
 
+const gotoRegister = () => {
+    window.location.href = '/register';
+};
+
 const submit = async () => {
     loading.value = true;
     error.value = '';
@@ -68,7 +72,7 @@ const submit = async () => {
                     </template>
                 </Button>
 
-                <Button label="Registrar" icon="pi pi-user-plus" severity="secondary"
+                <Button label="Registrar" icon="pi pi-user-plus" severity="secondary" v-on:click="gotoRegister()"
                     class="w-full py-2 rounded-lg flex justify-center items-center gap-2">
                     <template #icon>
                         <i class="pi pi-user-plus text-base! leading-normal!" />
