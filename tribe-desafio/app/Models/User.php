@@ -15,12 +15,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function getJWTIdentifier()
     {
-        return $this->getKey(); // normal id do usuário
+        return $this->getKey();
     }
 
     public function getJWTCustomClaims()
     {
-        return []; // claims customizadas, se precisar
+        return [];
     }
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;

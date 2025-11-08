@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ideia;
 
-class IdeaController extends Controller
+class IdeiaController extends Controller
 {
     /**
      * Display a listing of the resource.

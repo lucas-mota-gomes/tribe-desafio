@@ -31,5 +31,8 @@ export const ideiasService = {
     async getAll(): Promise<Ideia[]> {
         const response = await api.get<Ideia[]>('/ideias');
         return response.data;
-    },
+    },  
+    async vote(ideiaId: number, tipo: 'positivo' | 'negativo'): Promise<void> {
+        await api.post(`/ideias/${ideiaId}/votar`, { tipo });
+    } 
 };
