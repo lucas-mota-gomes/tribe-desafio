@@ -39,7 +39,7 @@
                     <div class="flex items-center gap-4">
                         <a
                             class="flex items-center justify-center p-2 bg-surface-0 dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 cursor-pointer">
-                            <i class="pi pi-sign-out text-base! leading-none! text-surface-600 dark:text-surface-300" />
+                            <i class="pi pi-sign-out text-base! leading-none! text-surface-600 dark:text-surface-300" v-on:click="logout()" />
                         </a>
                     </div>
                 </div>
@@ -57,6 +57,7 @@
 </template>
 <script setup>
 import { ref } from 'vue';
+import { authService } from '@/services/auth.service';
 
 const activeItem = ref(0);
 
@@ -66,5 +67,10 @@ const menuItems = [
 
 const setActiveItem = (index) => {
     activeItem.value = index;
+};
+
+const logout = async () => {
+    await authService.logout();
+    window.location.href = '/login';
 };
 </script>
