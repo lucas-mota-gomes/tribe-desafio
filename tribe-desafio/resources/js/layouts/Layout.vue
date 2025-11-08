@@ -1,3 +1,24 @@
+<script setup>
+import { ref } from 'vue';
+import { authService } from '@/services/auth.service';
+import Toast from 'primevue/toast';
+
+const activeItem = ref(0);
+
+const menuItems = [
+    { label: 'Dashboard', icon: 'pi-th-large' },
+];
+
+const setActiveItem = (index) => {
+    activeItem.value = index;
+};
+
+const logout = async () => {
+    await authService.logout();
+    window.location.href = '/login';
+};
+</script>
+
 <template>
     <div class="resize-container-1 min-h-screen flex flex-col bg-surface-50 dark:bg-surface-950">
         <div
@@ -49,28 +70,10 @@
             <div class="bg-surface-50 dark:bg-surface-950 flex flex-1">
                 <div
                     class="flex-1 bg-surface-0 dark:bg-surface-900">
+                    <Toast position="top-right" />
                     <slot />
                 </div>
             </div>
         </div>
     </div>
 </template>
-<script setup>
-import { ref } from 'vue';
-import { authService } from '@/services/auth.service';
-
-const activeItem = ref(0);
-
-const menuItems = [
-    { label: 'Dashboard', icon: 'pi-th-large' },
-];
-
-const setActiveItem = (index) => {
-    activeItem.value = index;
-};
-
-const logout = async () => {
-    await authService.logout();
-    window.location.href = '/login';
-};
-</script>

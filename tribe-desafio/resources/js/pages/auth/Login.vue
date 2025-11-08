@@ -2,9 +2,11 @@
 import { ref } from 'vue';
 import { authService, type LoginData } from '@/services/auth.service';
 import Button from 'primevue/button';
-import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
+import { useToast } from "primevue/usetoast";
+import Toast from 'primevue/toast';
+
 
 const form = ref<LoginData>({
     email: '',
@@ -13,6 +15,7 @@ const form = ref<LoginData>({
 
 const error = ref('');
 const loading = ref(false);
+const toast = useToast();
 
 const submit = async () => {
     loading.value = true;
@@ -22,7 +25,8 @@ const submit = async () => {
         await authService.login(form.value);
         window.location.href = '/dashboard';
     } catch (err: any) {
-        error.value = err.response?.data?.error || 'Erro ao fazer login';
+        error.value = 'Falha ao efetuar login. Verifique suas credenciais e tente novamente.';
+        toast.add({ severity: 'error', summary: 'Erro', detail: error.value, life: 3000 });
     } finally {
         loading.value = false;
     }
@@ -31,12 +35,14 @@ const submit = async () => {
 </script>
 
 <template>
+    <Toast />
     <div class="bg-surface-50 dark:bg-surface-950 px-6 py-20 md:px-20 lg:px-80">
         <div
             class="bg-surface-0 dark:bg-surface-900 p-8 md:p-12 shadow-sm rounded-2xl w-full max-w-sm mx-auto flex flex-col gap-8">
             <div class="flex flex-col items-center gap-4">
                 <div class="flex items-center gap-4">
-                    <img src="https://tribemd.com/_image?href=%2F_astro%2Fimg_base_tribe_logo.9SlBSC8C.svg&f=svg" alt="Tribe Logo" class="h-auto w-50 object-contain" />
+                    <img src="https://tribemd.com/_image?href=%2F_astro%2Fimg_base_tribe_logo.9SlBSC8C.svg&f=svg"
+                        alt="Tribe Logo" class="h-auto w-50 object-contain" />
                 </div>
             </div>
             <div class="flex flex-col gap-6 w-full">
@@ -50,8 +56,8 @@ const submit = async () => {
                     <label for="password1"
                         class="text-surface-900 dark:text-surface-0 font-medium leading-normal">Senha</label>
 
-                    <Password id="password1" v-model="form.password" placeholder="Senha" :toggleMask="true" :feedback="false"
-                        input-class="w-full!" />
+                    <Password id="password1" v-model="form.password" placeholder="Senha" :toggleMask="true"
+                        :feedback="false" input-class="w-full!" />
                 </div>
             </div>
             <div class="flex align-items-center gap-2">
@@ -71,4 +77,5 @@ const submit = async () => {
             </div>
         </div>
     </div>
+
 </template>
