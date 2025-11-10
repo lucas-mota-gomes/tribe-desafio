@@ -41,7 +41,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($token, auth()->user()->id);
     }
 
     public function logout()
@@ -58,12 +58,13 @@ class AuthController extends Controller
         return response()->json($user);
     }
 
-    protected function respondWithToken($token)
+    protected function respondWithToken($token, $user_id = null)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => config('jwt.ttl') * 60,
+            'user_id' => $user_id
         ]);
     }
 }

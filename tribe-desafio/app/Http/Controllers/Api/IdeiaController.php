@@ -25,6 +25,7 @@ class IdeiaController extends Controller
             ->get()
             ->map(function ($ideia) {
                 $ideia->total_votos = $ideia->votos_positivos - $ideia->votos_negativos;
+                $ideia->can_edit = auth()->check() && auth()->id() === $ideia->autor_id;
                 return $ideia;
             });
 

@@ -14,9 +14,15 @@
             <Card v-for="ideia in ideias" :key="ideia.id"
                 class="bg-surface-0 dark:bg-surface-900 shadow-sm rounded-2xl">
                 <template #title>
-                    <span class="font-medium text-surface-900 dark:text-surface-0 text-xl leading-tight">
-                        {{ ideia.titulo }}
-                    </span>
+                    <div class="flex justify-between w-full">
+                        <span class="font-medium text-surface-900 dark:text-surface-0 text-xl leading-tight">
+                            {{ ideia.titulo }}
+                        </span>
+                        <div class="flex gap-2">
+                            <i v-if="ideia.can_edit" class="pi pi-pencil cursor-pointer" v-on:click="openEditDialog(ideia)"></i>
+                            <i v-if="ideia.can_edit" class="pi pi-trash cursor-pointer text-red-500" v-on:click="deletarIdeia(ideia.id)"></i>
+                        </div>
+                    </div>
                 </template>
 
                 <template #subtitle>
@@ -42,18 +48,18 @@
                             <span>{{ formatarData(ideia.criado_em) }}</span>
                         </div>
                         <div class="flex gap-2">
-                            <Button type="button" severity="primary" v-on:click="votarIdeia(ideia?.id, 'positivo')" outlined icon="pi pi-thumbs-up"
-                                :badge="ideia?.votos?.toString() || '0'" />
-                            <Button type="button" severity="danger" v-on:click="votarIdeia(ideia?.id, 'negativo')" outlined icon="pi pi-thumbs-down"
-                                :badge="ideia?.votos_negativos?.toString() || '0'" />
+                            <Button type="button" severity="primary" v-on:click="votarIdeia(ideia?.id, 'positivo')"
+                                outlined icon="pi pi-thumbs-up" :badge="ideia?.votos?.toString() || '0'" />
+                            <Button type="button" severity="danger" v-on:click="votarIdeia(ideia?.id, 'negativo')"
+                                outlined icon="pi pi-thumbs-down" :badge="ideia?.votos_negativos?.toString() || '0'" />
                         </div>
                     </div>
                 </template>
             </Card>
         </div>
 
-        <Dialog v-model:visible="dialogVisivel" modal header="Nova Ideia" :style="{ width: '32rem' }"
-            :breakpoints="{ '960px': '75vw', '641px': '90vw' }">
+        <Dialog v-model:visible="dialogVisivel" modal :style="{ width: '32rem' }" @hide="onDialogHide"
+            :breakpoints="{ '960px': '75vw', '641px': '90vw' }" :header="isEditando ? 'Editar Ideia' : 'Nova Ideia'">
             <div class="flex flex-col gap-6 py-4">
                 <div class="flex flex-col gap-2">
                     <label for="titulo" class="font-semibold text-surface-900 dark:text-surface-0">
@@ -101,7 +107,8 @@ const dialogVisivel = ref(false);
 const salvando = ref(false);
 const toast = useToast();
 const ideias = ref([]);
-
+const isEditando = ref(false);
+const ideiaEditandoId = ref(null);
 
 
 
@@ -122,21 +129,33 @@ const fecharDialog = () => {
     };
 };
 
+const onDialogHide = () => {
+    isEditando.value = false;
+    ideiaEditandoId.value = null;
+    novaIdeia.value = {
+        titulo: '',
+        descricao: ''
+    };
+};
+
+
 const salvarIdeia = async () => {
     salvando.value = true;
 
     try {
+        if (isEditando.value) {
+            await ideiasService.update(ideiaEditandoId.value, novaIdeia.value);
+            await getIdeias();
+            isEditando.value = false;
+            ideiaEditandoId.value = null;
+            fecharDialog();
+            toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Ideia atualizada com sucesso.', life: 3000 });
+            return;
+        }
         const resposta = await ideiasService.create(novaIdeia.value);
         console.log("🚀 ~ salvarIdeia ~ resposta:", resposta)
-
-        ideias.value.unshift({
-            id: resposta.id || ideias.value.length + 1,
-            titulo: novaIdeia.value.titulo,
-            descricao: novaIdeia.value.descricao,
-            autor: 'Usuário Atual',
-            criado_em: new Date().toISOString(),
-            votos: 0
-        });
+        await getIdeias();
+        toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Ideia criada com sucesso.', life: 3000 });
 
         fecharDialog();
 
@@ -149,6 +168,17 @@ const salvarIdeia = async () => {
 
     } finally {
         salvando.value = false;
+    }
+};
+
+const deletarIdeia = async (ideiaId) => {
+    try {
+        await ideiasService.delete(ideiaId);
+        await getIdeias();
+        toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Ideia deletada com sucesso.', life: 3000 });
+    } catch (erro) {
+        console.error('Erro ao deletar ideia:', erro);
+        alert('Erro ao deletar ideia. Tente novamente.');
     }
 };
 
@@ -176,7 +206,8 @@ const getIdeias = async () => {
             autor: ideia.autor?.name || 'Desconhecido',
             criado_em: ideia.created_at,
             votos: ideia.votos_positivos || 0,
-            votos_negativos: ideia.votos_negativos || 0
+            votos_negativos: ideia.votos_negativos || 0,
+            can_edit: ideia.can_edit || false
         }));
     } catch (erro) {
         console.error('Erro ao carregar ideias:', erro);
@@ -187,6 +218,15 @@ const getIdeias = async () => {
     }
 };
 
+const openEditDialog = (ideia) => {
+    novaIdeia.value = {
+        titulo: ideia.titulo,
+        descricao: ideia.descricao
+    };
+    dialogVisivel.value = true;
+    isEditando.value = true;
+    ideiaEditandoId.value = ideia.id;
+};
 
 const formatarData = (dataISO) => {
     const data = new Date(dataISO);

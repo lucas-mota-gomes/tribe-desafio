@@ -1,3 +1,4 @@
+import { edit } from '@/routes/profile';
 import axios from 'axios';
 
 const api = axios.create({
@@ -34,5 +35,12 @@ export const ideiasService = {
     },  
     async vote(ideiaId: number, tipo: 'positivo' | 'negativo'): Promise<void> {
         await api.post(`/ideias/${ideiaId}/votar`, { tipo });
-    } 
+    },
+    async update(ideiaId: number, ideia: Partial<Omit<Ideia, 'id'>>): Promise<Ideia> {
+        const response = await api.put<Ideia>(`/ideias/${ideiaId}`, ideia);
+        return response.data;
+    },
+    async delete(ideiaId: number): Promise<void> {
+        await api.delete(`/ideias/${ideiaId}`);
+    }
 };

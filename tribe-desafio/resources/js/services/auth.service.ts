@@ -32,6 +32,7 @@ export interface AuthResponse {
     access_token: string;
     token_type: string;
     expires_in: number;
+    user_id: number;
 }
 
 export const authService = {
@@ -44,6 +45,7 @@ export const authService = {
     async login(data: LoginData): Promise<AuthResponse> {
         const response = await api.post<AuthResponse>('/login', data);
         localStorage.setItem('token', response.data.access_token);
+        localStorage.setItem('user_id', response.data.user_id.toString());
         return response.data;
     },
 
