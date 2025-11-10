@@ -5,8 +5,8 @@ Breve descrição da sua solução.
 
 ## 🏗️ Stack utilizada
 - Frontend: Vue.js 3 + TypeScript + Tailwind
-- Backend: Laravel (ou outro)
-- Banco de dados: ...
+- Backend: Laravel
+- Banco de dados: sqlite
 
 ## 🔧 Como executar
 ### Backend
@@ -26,10 +26,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
-## 🔐 Login padrão (opcional)
-- Email: `teste@teste.com`
-- Senha: `123456`
 
 ## 🧩 Observações
 - Descreva aqui as decisões técnicas importantes;
