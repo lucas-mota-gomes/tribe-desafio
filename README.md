@@ -17,7 +17,6 @@ composer install
 npm install
 php artisan key:generate
 php artisan migrate --seed
-php artisan jwt:secret
 composer run dev
 ```
 
