@@ -6,7 +6,7 @@ import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import { useToast } from "primevue/usetoast";
 import Toast from 'primevue/toast';
-
+import { router } from '@inertiajs/vue3';
 
 const form = ref<LoginData>({
     email: '',
@@ -18,7 +18,7 @@ const loading = ref(false);
 const toast = useToast();
 
 const gotoRegister = () => {
-    window.location.href = '/register';
+    router.visit('/register');
 };
 
 const submit = async () => {
@@ -27,7 +27,7 @@ const submit = async () => {
 
     try {
         await authService.login(form.value);
-        window.location.href = '/dashboard';
+        router.visit('/dashboard');
     } catch (err: any) {
         error.value = 'Falha ao efetuar login. Verifique suas credenciais e tente novamente.';
         toast.add({ severity: 'error', summary: 'Erro', detail: error.value, life: 3000 });

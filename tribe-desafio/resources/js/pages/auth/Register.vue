@@ -6,6 +6,7 @@ import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import { useToast } from "primevue/usetoast";
 import Toast from 'primevue/toast';
+import { router } from '@inertiajs/vue3';
 
 const form = ref<RegisterData>({
     name: '',
@@ -29,7 +30,7 @@ const submit = async () => {
         }
         await authService.register(form.value);
         toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Registro realizado com sucesso.', life: 3000 });
-        window.location.href = '/dashboard';
+        router.visit('/dashboard');
 
     } catch (err: any) {
         console.log("🚀 ~ submit ~ err:", err)

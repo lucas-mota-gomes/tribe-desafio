@@ -97,6 +97,7 @@ import Textarea from 'primevue/textarea';
 import ProgressSpinner from 'primevue/progressspinner';
 import { ideiasService } from '@/services/ideias.service';
 import { useToast } from 'primevue/usetoast';
+import { router } from '@inertiajs/vue3';
 
 defineOptions({
     layout: Layout
@@ -212,7 +213,7 @@ const getIdeias = async () => {
     } catch (erro) {
         console.error('Erro ao carregar ideias:', erro);
         toast.add({ severity: 'error', summary: 'Erro', detail: 'Login expirado. Por favor, faça login novamente.', life: 3000 });
-        window.location.href = '/login';
+        router.visit('/login');
     } finally {
         carregando.value = false;
     }
