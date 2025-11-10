@@ -9,7 +9,7 @@ Breve descrição da sua solução.
 - Banco de dados: sqlite
 
 ## 🔧 Como executar
-### Backend
+### Backend + FrontEnd
 ```bash
 cd backend
 cp .env.example .env
@@ -17,14 +17,7 @@ composer install
 php artisan key:generate
 php artisan migrate --seed
 php artisan jwt:secret
-php artisan serve
-```
-
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
+composer run dev
 ```
 
 ## 🧩 Observações
